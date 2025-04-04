@@ -2,13 +2,14 @@ provider "azurerm" {
   features {}
 }
 
-module "service_principal" {
-  source           = "../../modules/service_principal"
-  application_name = "terraform-service-principal-dev"
-  secret_end_date  = "2099-12-31T23:59:59Z"
-  role             = "Contributor"
-  scope            = "/subscriptions/${var.subscription_id}"
-}
+# Optional: Use this to create SPs dynamically for legacy/non-OIDC deployments
+# module "service_principal" {
+#   source           = "../../modules/service_principal"
+#   application_name = "terraform-service-principal-dev"
+#   secret_end_date  = "2099-12-31T23:59:59Z"
+#   role             = "Contributor"
+#   scope            = "/subscriptions/${var.subscription_id}"
+# }
 
 data "azuread_service_principal" "gh_oidc" {
   display_name = "terraform-gh-actions-app"
