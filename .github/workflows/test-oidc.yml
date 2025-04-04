@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./terraform/test-rg
+        working-directory: ./terraform/test
 
     steps:
       - name: Checkout
