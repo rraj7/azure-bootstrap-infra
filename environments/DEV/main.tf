@@ -22,7 +22,7 @@ resource "random_string" "suffix" {
 }
 
 module "keyvault" {
-  source              = "../../modules/keyvault"
+  source              = "../../modules/key_vault"
   name                = "kv-bootstrap-${var.env_name.suffix.result}"
   location            = var.location
   resource_group_name = var.resource_group_name
