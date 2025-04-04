@@ -1,0 +1,37 @@
+name: Azure Bootstrap Infrastructure
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+    - name: Fetch Secrets from Key Vault
+      id: keyvault
+      uses: azure/keyvault@v1
+      with:
+        keyvault: "my-keyvault"
+        secrets: |
+          client-id
+          client-secret
+
+    - name: Terraform Init and Apply
+      env:
+        ARM_CLIENT_ID: ${{ steps.keyvault.outputs.client-id }}
+        ARM_CLIENT_SECRET: ${{ steps.keyvault.outputs.client-secret }}
+      run: |
+        terraform init
+        terraform apply -auto-approve
