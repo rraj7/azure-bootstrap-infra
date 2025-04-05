@@ -15,16 +15,9 @@ data "azuread_service_principal" "gh_oidc" {
   display_name = "terraform-gh-actions-app"
 }
 
-resource "random_string" "suffix" {
-  length  = 4
-  upper   = false
-  number  = true
-  special = false
-}
-
 module "keyvault" {
   source              = "../../modules/key_vault"
-  name                = "kv-bootstrap-${var.env_name.suffix.result}"
+  name                = "kv-bootstrap-${var.env_name}"
   location            = var.location
   resource_group_name = var.resource_group_name
   tenant_id           = var.tenant_id
