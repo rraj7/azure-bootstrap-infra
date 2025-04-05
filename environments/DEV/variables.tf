@@ -14,3 +14,8 @@ variable "resource_group_name" {
 variable "tenant_id" {
   type = string
 }
+
+variable "env_name" {
+  default = "DEV"
+  type = string
+}
