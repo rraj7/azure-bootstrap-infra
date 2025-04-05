@@ -50,6 +50,11 @@ jobs:
         run: echo 'plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"' > terraform.rc
         shell: bash
 
+      - name: Terraform Init
+        run: terraform init
+        env:
+          TF_CLI_CONFIG_FILE: ${{ github.workspace }}/terraform.rc
+
       # Run terraform validate
       - name: Terraform Validate
         run: terraform validate
@@ -70,12 +75,6 @@ jobs:
       # Run TFLint with Azure ruleset
       - name: Run TFLint
         run: tflint --config ${{ github.workspace }}/.tflint.hcl --recursive
-
-      # Initialize Terraform
-      - name: Terraform Init
-        run: terraform init
-        env:
-          TF_CLI_CONFIG_FILE: ${{ github.workspace }}/terraform.rc
 
       # Plan Terraform changes
       - name: Terraform Plan
