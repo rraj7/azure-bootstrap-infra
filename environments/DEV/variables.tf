@@ -16,6 +16,6 @@ variable "tenant_id" {
 }
 
 variable "env_name" {
-  default = "DEV"
   type = string
+  default = "DEV"
 }
