@@ -26,15 +26,15 @@ jobs:
       - name: Pull TFLint Docker image from GHCR
         run: docker pull ghcr.io/rraj7/tflint-azure:latest
 
-      # Step 2: Run TFLint using pulled image
+      # Step 2: Run TFLint using pulled image (wrapped for bash compatibility)
       - name: Run TFLint inside container
         id: tflint
-        run: >
+        run: |
           docker run --rm \
-          -v ${{ github.workspace }}:/workspace \
-          -w /workspace/environments/dev \
-          ghcr.io/rraj7/tflint-azure:latest \
-          --config /workspace/.tflint.hcl --recursive
+            -v "${{ github.workspace }}:/workspace" \
+            -w "/workspace/environments/dev" \
+            ghcr.io/rraj7/tflint-azure:latest \
+            --config "/workspace/.tflint.hcl" --recursive
 
       # Step 3: Comment on PR if TFLint fails
       - name: Comment on PR if lint fails
