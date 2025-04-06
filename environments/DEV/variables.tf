@@ -1,21 +1,37 @@
-variable "subscription_id" {
-  description = "The Azure Subscription ID for the development environment"
+# modules/key_vault/variables.tf
+
+variable "name" {
+  description = "Name of the Key Vault"
   type        = string
 }
 
 variable "location" {
-  default = "East US"
+  description = "Azure region"
+  type        = string
 }
 
 variable "resource_group_name" {
-  default = "rg-bootstrap-dev"
+  description = "Name of the resource group"
+  type        = string
 }
 
 variable "tenant_id" {
-  type = string
+  description = "Azure Tenant ID"
+  type        = string
+}
+
+variable "object_id" {
+  description = "Object ID for Key Vault access policy"
+  type        = string
+}
+
+variable "sku_name" {
+  description = "SKU for the Key Vault"
+  type        = string
 }
 
 variable "env_name" {
-  type = string
-  default = "DEV"
+  description = "Environment name"
+  type        = string
+  default     = "dev"
 }
