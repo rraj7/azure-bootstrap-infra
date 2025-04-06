@@ -1,7 +1,7 @@
 name: Deploy Azure Key Vault via Terraform
 
 on:
-  workflow_dispatch: {}  # Manual trigger
+  workflow_dispatch: {}
   push:
     branches:
       - main
@@ -16,14 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: environments/DEV
+        working-directory: ./terraform/environments/dev
 
     steps:
-      # Checkout the repo
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Cache Terraform plugins
       - name: Cache Terraform plugin directory
         uses: actions/cache@v3
         with:
@@ -31,7 +29,6 @@ jobs:
           key: terraform-plugins-${{ runner.os }}-${{ hashFiles('**/.terraform.lock.hcl') }}
           restore-keys: terraform-plugins-${{ runner.os }}-
 
-      # Log in to Azure via OIDC
       - name: Azure Login with OIDC
         uses: azure/login@v1
         with:
@@ -39,50 +36,46 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # Setup Terraform
       - name: Setup Terraform CLI
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.7
 
-      # Create plugin cache config
       - name: Create Terraform CLI Config
-        run: echo 'plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"' > terraform.rc
+        run: echo 'plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"' > $GITHUB_WORKSPACE/terraform.rc
         shell: bash
 
+      # --- Terraform Init FIRST to install modules ---
       - name: Terraform Init
         run: terraform init
         env:
           TF_CLI_CONFIG_FILE: ${{ github.workspace }}/terraform.rc
 
-      # Run terraform validate
+      # --- Now we can validate safely ---
       - name: Terraform Validate
         run: terraform validate
         env:
           TF_CLI_CONFIG_FILE: ${{ github.workspace }}/terraform.rc
 
-      # Run tfsec - Terraform security analysis
+      # --- Security Scan ---
       - name: Run tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
 
-      # Install TFLint & Azure Ruleset Plugin
-      - name: Install TFLint & Azure Rules
+      # --- Linting with Azure ruleset ---
+      - name: Install TFLint & Azure Plugin
         run: |
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
           mkdir -p ~/.tflint.d/plugins
           tflint --init
 
-      # Run TFLint with Azure ruleset
       - name: Run TFLint
         run: tflint --config ${{ github.workspace }}/.tflint.hcl --recursive
 
-      # Plan Terraform changes
       - name: Terraform Plan
         run: terraform plan -out=tfplan -var="tenant_id=${{ secrets.AZURE_TENANT_ID }}"
         env:
           TF_CLI_CONFIG_FILE: ${{ github.workspace }}/terraform.rc
 
-      # Apply Terraform plan
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
         env:
