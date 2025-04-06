@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: environments/DEV
+        working-directory: ./terraform/environments/dev
 
     steps:
       - name: Checkout code
@@ -45,32 +45,36 @@ jobs:
         run: echo 'plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"' > $GITHUB_WORKSPACE/terraform.rc
         shell: bash
 
-      # --- Terraform Init FIRST to install modules ---
+      # --- Terraform Init first ---
       - name: Terraform Init
         run: terraform init
         env:
           TF_CLI_CONFIG_FILE: ${{ github.workspace }}/terraform.rc
 
-      # --- Now we can validate safely ---
       - name: Terraform Validate
         run: terraform validate
         env:
           TF_CLI_CONFIG_FILE: ${{ github.workspace }}/terraform.rc
 
-      # --- Security Scan ---
       - name: Run tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
 
-      # --- Linting with Azure ruleset ---
-      - name: Install TFLint & Azure Plugin
+      # ---- TFLint Setup & Manual Azure Plugin Install ----
+      - name: Install TFLint
         run: |
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-          mkdir -p ~/.tflint.d/plugins
-          tflint --init
+
+      - name: Install TFLint Azure Ruleset Plugin
+        run: |
+          mkdir -p ~/.tflint.d/plugins/github.com/terraform-linters/tflint-ruleset-azurerm/0.20.0
+          curl -L -o ~/.tflint.d/plugins/github.com/terraform-linters/tflint-ruleset-azurerm/0.20.0/tflint-ruleset-azurerm_linux_amd64.zip \
+            https://github.com/terraform-linters/tflint-ruleset-azurerm/releases/download/v0.20.0/tflint-ruleset-azurerm_linux_amd64.zip
+          unzip -o ~/.tflint.d/plugins/github.com/terraform-linters/tflint-ruleset-azurerm/0.20.0/tflint-ruleset-azurerm_linux_amd64.zip -d ~/.tflint.d/plugins/github.com/terraform-linters/tflint-ruleset-azurerm/0.20.0
 
       - name: Run TFLint
         run: tflint --config ${{ github.workspace }}/.tflint.hcl --recursive
 
+      # --- Terraform Plan & Apply ---
       - name: Terraform Plan
         run: terraform plan -out=tfplan -var="tenant_id=${{ secrets.AZURE_TENANT_ID }}"
         env:
