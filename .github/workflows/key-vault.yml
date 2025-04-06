@@ -1,4 +1,4 @@
-name: Secure Infra Bootstrap with Linting
+name: Deploy Azure Key Vault via Terraform
 
 on:
   push:
@@ -11,6 +11,7 @@ on:
 permissions:
   id-token: write
   contents: read
+  pull-requests: write
 
 jobs:
   lint:
@@ -18,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./environments/dev
+        working-directory: environments/dev
 
     steps:
       - name: Checkout code
@@ -30,6 +31,7 @@ jobs:
 
       # Step 2: Run TFLint using pulled image
       - name: Run TFLint inside container
+        id: tflint
         run: >
           docker run --rm \
           -v ${{ github.workspace }}:/workspace \
@@ -37,10 +39,19 @@ jobs:
           ghcr.io/rraj7/tflint-azure:latest \
           --config /workspace/.tflint.hcl --recursive
 
+      # Step 3: Comment on PR if TFLint fails
+      - name: Comment on PR if lint fails
+        if: failure()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: |
+            🚨 **TFLint failed** in this pull request.
+            Please fix the linting errors before merging.
+
   deploy:
     name: Deploy Azure Infra
     runs-on: ubuntu-latest
-    needs: lint
+    needs: lint  # Deploy depends on successful lint
     defaults:
       run:
         working-directory: ./environments/dev
