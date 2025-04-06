@@ -11,3 +11,7 @@ rule "terraform_unused_declarations" {
 rule "terraform_typed_variables" {
   enabled = true
 }
+
+rule "azurerm_keyvault_enable_rbac_authorization" {
+  enabled = true
+}

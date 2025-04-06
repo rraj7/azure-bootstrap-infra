@@ -1,0 +1,37 @@
+name: Build and Push TFLint Docker Image to GHCR
+
+# This workflow is triggered manually via the GitHub Actions UI
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    name: Build and Push TFLint Azure Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Log in to GitHub Container Registry (GHCR)
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 3: Build Docker image for TFLint with Azure plugin
+      - name: Build Docker Image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/tflint-azure:latest ./tools/docker/tflint-azure
+
+      # Step 4: Push the image to GitHub Container Registry
+      - name: Push Docker Image to GHCR
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/tflint-azure:latest
