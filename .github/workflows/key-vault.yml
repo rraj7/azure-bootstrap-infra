@@ -62,7 +62,7 @@ jobs:
           pwd
           echo "✅ Top-level contents:"
           ls -la
-          echo "✅ Recursive tree:"
+          echo "✅ Recursive tree: "
           ls -R
 
       - name: Azure Login with OIDC
