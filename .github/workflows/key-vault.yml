@@ -50,6 +50,7 @@ jobs:
     env:
       TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
       TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_env_name: DEV
       TF_CLI_CONFIG_FILE: terraform.rc
 
     steps:
@@ -64,10 +65,6 @@ jobs:
           ls -la
           echo "✅ Recursive tree: "
           ls -R
-
-      - name: Export env_name from folder
-        run: echo "TF_VAR_env_name=$(basename $PWD)" >> $GITHUB_ENV
-        working-directory: environments/DEV
 
       - name: Azure Login with OIDC
         uses: azure/login@v1
