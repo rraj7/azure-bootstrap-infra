@@ -17,3 +17,11 @@ variable "tenant_id" {
 variable "object_id" {
   type = string
 }
+
+variable "env_name" {
+    type = string
+}
+
+variable "sku_name" {
+  type = string
+}
