@@ -1,4 +1,4 @@
-name: Deploy Azure Key Vault via Terraform
+name: Deploy Azure Key Vault
 
 on:
   push:
@@ -17,9 +17,6 @@ jobs:
   lint:
     name: Run TFLint via GHCR
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: environments/dev
 
     steps:
       - name: Checkout code
@@ -54,7 +51,7 @@ jobs:
     needs: lint  # Deploy depends on successful lint
     defaults:
       run:
-        working-directory: ./environments/dev
+        working-directory: environments/dev
 
     steps:
       - name: Checkout code
