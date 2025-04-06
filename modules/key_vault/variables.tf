@@ -25,3 +25,15 @@ variable "env_name" {
 variable "sku_name" {
   type = string
 }
+
+variable "soft_delete_retention_days" {
+  description = "Days to retain soft-deleted vault"
+  type        = number
+  default     = 7
+}
+
+variable "purge_protection_enabled" {
+  description = "Enable purge protection"
+  type        = bool
+  default     = true
+}
