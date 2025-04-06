@@ -3,24 +3,18 @@ resource "azurerm_key_vault" "this" {
   location                    = var.location
   resource_group_name         = var.resource_group_name
   tenant_id                   = var.tenant_id
-  sku_name                    = "standard"
-  purge_protection_enabled    = true
+  sku_name                    = var.sku_name
+  purge_protection_enabled    = var.purge_protection_enabled
+  soft_delete_retention_days  = var.soft_delete_retention_days
 
-  network_acls {
-    default_action = "Allow"
-    bypass         = "AzureServices"
+  access_policy {
+    tenant_id = var.tenant_id
+    object_id = var.object_id
+
+    secret_permissions = ["Get", "Set", "List"]
   }
-}
 
-resource "azurerm_key_vault_access_policy" "gh_oidc" {
-  key_vault_id = azurerm_key_vault.this.id
-  tenant_id    = var.tenant_id
-  object_id    = var.object_id
-
-  secret_permissions = [
-    "Get",
-    "List",
-    "Set",
-    "Delete"
-  ]
+  tags = {
+    environment = var.env_name
+  }
 }
