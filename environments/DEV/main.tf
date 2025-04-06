@@ -1,6 +1,6 @@
 # Fetch the object ID of GitHub Actions workload identity
 locals {
-  resource_group_name = "rg-bootstrap-${var.env_name}"
+  resource_group_name = "rg-bootstrap-dev"
 }
 data "azuread_service_principal" "gh_oidc" {
   display_name = "terraform-gh-actions-app"
@@ -9,7 +9,7 @@ data "azuread_service_principal" "gh_oidc" {
 # Deploy Azure Key Vault using a secure module
 module "keyvault" {
   source              = "../../modules/key_vault"
-  name                = "kv-${var.env_name}"
+  name                = "kv-bootstrap-dev"
   location            = var.location
   resource_group_name = local.resource_group_name
   tenant_id           = var.tenant_id
