@@ -21,6 +21,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      
+      - name: Check directory structure
+        run: ls -R
 
       - name: Pull TFLint Docker image from GHCR
         run: docker pull ghcr.io/rraj7/tflint-azure:latest
