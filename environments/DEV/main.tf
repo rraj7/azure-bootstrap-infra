@@ -10,6 +10,7 @@ data "azuread_service_principal" "gh_oidc" {
 module "keyvault" {
   source              = "../../modules/key_vault"
   name                = "kv-bootstrap-dev"
+  env_name            = var.env_name
   location            = var.location
   resource_group_name = local.resource_group_name
   tenant_id           = var.tenant_id
