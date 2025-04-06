@@ -21,9 +21,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Check directory structure
-        run: ls -R
 
       - name: Pull TFLint Docker image from GHCR
         run: docker pull ghcr.io/rraj7/tflint-azure:latest
@@ -59,6 +56,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Print repo directory structure (debug 🔎)
+        run: |
+          echo "✅ PWD:"
+          pwd
+          echo "✅ Top-level contents:"
+          ls -la
+          echo "✅ Recursive tree:"
+          ls -R
+
       - name: Azure Login with OIDC
         uses: azure/login@v1
         with:
@@ -76,6 +82,10 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
+        working-directory: environments/dev
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
         working-directory: environments/dev
 
       - name: Terraform Validate
