@@ -72,6 +72,10 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Export env_name from folder
+        run: echo "TF_VAR_env_name=$(basename $PWD)" >> $GITHUB_ENV
+        working-directory: environments/DEV
+
       - name: Setup Terraform CLI
         uses: hashicorp/setup-terraform@v2
         with:
