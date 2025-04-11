@@ -1,5 +1,3 @@
-# modules/key_vault/variables.tf
-
 variable "name" {
   description = "Name of the Key Vault"
   type        = string
@@ -34,7 +32,6 @@ variable "sku_name" {
 variable "env_name" {
   description = "Environment name"
   type        = string
-  default     = "dev"
 }
 
 variable "subscription_id" {

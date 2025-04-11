@@ -1,1 +1,2 @@
 terraform.rc
+/environments/dev/dev.tfvars
