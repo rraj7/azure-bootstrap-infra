@@ -9,7 +9,7 @@ data "azuread_service_principal" "gh_oidc" {
 # Create Azure Key Vault via reusable module
 module "keyvault" {
   source                     = "../../modules/key_vault"
-  name                       = "kv-bootstrap-${var.env_name}"
+  name                       = "kv-bootstrap-dev"
   env_name                   = var.env_name
   location                   = var.location
   resource_group_name        = local.resource_group_name
