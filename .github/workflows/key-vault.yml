@@ -94,7 +94,7 @@ jobs:
         working-directory: environments/DEV
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform plan -var-file="environments/DEV/dev.tfvars" -out=tfplan
         working-directory: environments/DEV
 
       - name: Terraform Apply
