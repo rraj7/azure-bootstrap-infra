@@ -95,7 +95,7 @@ jobs:
         working-directory: environments/DEV
       
       - name: List DEV folder contents
-        run: ls -la | ls -b environments/DEV
+        run: ls -la 
         working-directory: environments/DEV
 
       - name: Assert dev.tfvars exists
