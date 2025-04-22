@@ -11,8 +11,8 @@ module "keyvault" {
   source                     = "../../modules/key_vault"
   name                       = "kv-bootstrap-dev"
   env_name                   = "dev"
-  location                   = "EastUs"
-  resource_group_name        = local.resource_group_name
+  location                   = "eastus"
+  resource_group_name        = "rg-bootstrap-dev"
   tenant_id                  = var.tenant_id
   object_id                  = data.azuread_service_principal.gh_oidc.object_id
   sku_name                   = "standard"
