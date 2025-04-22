@@ -1,4 +1,4 @@
-name: Terraform Deployment
+name: Key Vault Test Workflow
 
 on:
   workflow_dispatch:
